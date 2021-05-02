@@ -1,4 +1,4 @@
-;;; el-docstring-sap.el --- A minor-mode display docstrings for the symbol at point -*- lexical-binding: t; -*-
+;;; el-docstring-sap.el --- A minor-mode display docstrings for the symbol at point
 ;;
 ;; Copyright (C) 2010-2021 rileyrg
 ;;
@@ -51,7 +51,7 @@
 (defcustom el-docstring-sap--delay 2.5 "How long to delay before `el-docstring-sap--display-func' is called." :type 'float)
 
 (defcustom el-docstring-sap--save-history t "When non-nil store each search popup to `el-docstring-sap--history'." :type 'boolean)
-(defvar el-docstring-sap--history nil "Store history of docstring references")
+(defvar el-docstring-sap--history nil "Store history of docstring references.")
 
 (require 'savehist)
 (add-to-list 'savehist-additional-variables 'el-docstring-sap--history)
