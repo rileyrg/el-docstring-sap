@@ -123,6 +123,57 @@
     When non-nil save the symbol queried to ~el-docstring-sap--history~
 
 * ToDo                                                             :noexport:
+** TODO create list from list
+   SCHEDULED: <2021-05-03 Mo>
+   :PROPERTIES:
+   :DateCreated: <2021-05-03 Mo 20:38>
+   :ID:       90081bfd-b825-4df0-bceb-a48156f88a9c
+   :END:
+   :LOGBOOK:
+   - State "TODO"       from              [2021-05-03 Mo 20:38]
+   :END:
+***
+    figure out how to create defcustom choices things from list  - el-docstring-sap--display-func
+
+      <rgr> I have a list so '(l1 l2 l3). I want to programatically  create a list something like  '(a b c (d l1) (d l2) (d l3)) where you can see the components from the first list and turned into cons cells (terminology ?) and appenaded to '(a b c). Whats the correct/nice/proper way to go about this in elisp?   there are oodles of list "for all" functions it seems.
+ <tromey> any way that works is fine
+ <tromey> a simple way is (append '(a b c) (mapcar ...))
+ <tromey> another way is a loop with (push ...)
+ <jla> is there a way to save somehow from EWW browser to a formatted file ?  (.Org preferred...  , .md ? )
+ <technomancy> pandoc, probably
+ <jla> umh, love pandoc ... i've found some 'org-eww-copy-for-org-mode'
+ <jla> dunno what it does...though
+ <rgr> thanks
+ <rgr> but doesnt the mapcar creaze a list of cons?
+ <rgr> Stupid Q. Ill just try it.
+*** STARTED second part pjb
+    :LOGBOOK:
+    - State "STARTED"    from              [2021-05-03 Mo 22:00]
+    :END:
+    <pjb> rgr: mapcar creates a list of conses. Only one cons per element in the input list.
+<pjb> rgr: if you want a different number of elements in the result than in the input, you can use mapcan.
+<pjb> (mapcan (lambda (x) (if (eq x 'l1) (list 'a 'b 'c (list 'd x)) (list (list 'd x)))) '(l1 l2 l3)) #| --> (a b c (d l1) (d l2) (d l3)) |#
+<pjb> rgr: but your example doesn't look like it.
+<pjb> rgr: the question is not as much what input what output, as what the fuck are you mapping? What's your transformative function?
+<pjb> rgr:  (mapcan (lambda (x) (if (eq x 'l1) '(a b c (d l1) (d l2) (d l3)) nil))  '(l1 l2 l3)) #| --> (a b c (d l1) (d l2) (d l3)) |#  works too!
+<pjb> rgr: but was the function (lambda (x) (if (eq x 'l1) '(a b c (d l1) (d l2) (d l3)) nil)) what you really wanted???
+<fsbot> My sources say no!
+<pjb> rgr: note in the first case: (mapcan (lambda (x) (if (eq x 'l1) (list 'a 'b 'c (list 'd x)) (list (list 'd x)))) '(1 2 3 4)) #| --> ((d 1) (d 2) (d 3) (d 4)) |#
+<pjb> rgr note in the second case: (mapcan (lambda (x) (if (eq x 'l1) '(a b c (d l1) (d l2) (d l3)) nil)) '(1 2 3 4)) #| --> nil |#  DUH!
+<rgr> sorry was away. will store and peruse.
+<rgr> but I think maybe you read too much into it there. all values were constants. not creating "l1 l2 l3" from l and (1 2 3)
+<rgr> (a b) and  (l1 l2 l3)  ->  '(a b c (C l1) (C l2) (C l3))
+<rgr> (a b c) and  (l1 l2 l3)  ->  '(a b c (C l1) (C l2) (C l3))
+<rgr> brb
+
+#+begin_src emacs-lisp
+  (let* ((l1 '(radio ))
+         (l2 '(f1 f2 f3))
+         (l3 (mapcar (lambda(e)(cons 'function-item (cons e nil))) l2))
+         (res (append l1 l3)))
+    res)
+#+end_src
+
 ** DONE continue with adding el-docstring-sap history save
    CLOSED: [2021-04-29 Do 14:06] SCHEDULED: <2021-04-29 Do>
    :PROPERTIES:

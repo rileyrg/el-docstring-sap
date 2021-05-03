@@ -60,19 +60,27 @@
 (defcustom el-docstring-sap--display-funcs  '(el-docstring-sap--posframe el-docstring-sap--quick-peek el-docstring-sap--popup el-docstring-sap--describe-symbol)
   "Functions to provide `el-docstring-sap-mode' display." :type '(repeat function))
 
+(setq df-cust-list (let* ((l1 '(radio :tag "hello"))
+       (l2 '(f1 f2 f3))
+       (l3 (mapcar (lambda(e)(cons 'function-item (cons e nil))) l2))
+       (res (append l1 l3)))
+  res)) ;; (quote df-cust-list)
+
+
 (defcustom el-docstring-sap--display-func 'el-docstring-sap--posframe "The function to display a docstring for symbol at point." :type
-  '(choice :value el-docstring-sap--posframe (const :tag "default(posframe)" el-docstring-sap--posframe)
-           (radio :tag "additional sap display functions"
-            (function-item el-docstring-sap--quick-peek)
-            (function-item el-docstring-sap--popup)
-            (function-item el-docstring-sap--describe-symbol))))
+  `(choice :value el-docstring-sap--posframe (const :tag "default(posframe)" 'el-docstring-sap--posframe)
+           ,df-cust-list))
+           ;; (radio :tag "additional sap display functions"
+           ;;  (function-item el-docstring-sap--quick-peek)
+           ;;  (function-item el-docstring-sap--popup)
+           ;;  (function-item el-docstring-sap--describe-symbol))))
 
 (defvar el-docstring-sap--timer nil  "Store the `el-docstring-sap-mode' timer." )
 (defvar el-docstring-sap--lastsym nil  "Don't idle-repeat the same symbol twice in a row.")
 
 (require 'use-package)
 
-(defun el-docstring-sap--describe-symbol(_docstring &optional sym)
+(defun el-docstring-sap--describe-symbol(&optional _docstring sym)
 
   "Use the internal `describe-symbol' to show help for symbol SYM."
   (if sym
@@ -195,7 +203,7 @@
     (let ((info el-docstring-sap--posframe-arghandler-plist))
       (or (plist-get info arg-name) value)))
 
-  (defun el-docstring-sap--posframe(docstring &optional _sym)
+  (defun el-docstring-sap--posframe(&optional docstring _sym)
     "`posframe-show' to display  DOCSTRING. Pass nil to erase."
     (interactive)
     (posframe-hide "*el-docstring*")
@@ -212,7 +220,7 @@
                            :poshandler el-docstring-sap--posframe-poshandler
                            :position (if (bound-and-true-p el-docstring-sap--posframe-poshandler) t p))))))))
 
-(defun el-docstring-sap--quick-peek(docstring &optional _sym)
+(defun el-docstring-sap--quick-peek(&optional docstring _sym)
   "`quick-peek-show' to display  DOCSTRING.  Pass nil to erase."
   (interactive)
   (condition-case nil
@@ -224,7 +232,7 @@
           (quick-peek-show docstring)))
     (error (el-docstring-sap--display-fail docstring))))
 
-(defun el-docstring-sap--popup(docstring &optional _sym)
+(defun el-docstring-sap--popup(&optional docstring _sym)
   "`popup-tip' to display  DOCSTRING.  Pass nil to erase."
   (interactive)
   (condition-case nil
