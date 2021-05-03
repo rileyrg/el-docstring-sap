@@ -57,23 +57,13 @@
 (add-to-list 'savehist-additional-variables 'el-docstring-sap--history)
 
 (defcustom el-docstring-sap--lighter " SapDoc" "Modeline indicator for `el-docstring-sap-mode'." :type 'string)
+
 (defcustom el-docstring-sap--display-funcs  '(el-docstring-sap--posframe el-docstring-sap--quick-peek el-docstring-sap--popup el-docstring-sap--describe-symbol)
   "Functions to provide `el-docstring-sap-mode' display." :type '(repeat function))
 
-(setq df-cust-list (let* ((l1 '(radio :tag "hello"))
-       (l2 '(f1 f2 f3))
-       (l3 (mapcar (lambda(e)(cons 'function-item (cons e nil))) l2))
-       (res (append l1 l3)))
-  res)) ;; (quote df-cust-list)
-
-
 (defcustom el-docstring-sap--display-func 'el-docstring-sap--posframe "The function to display a docstring for symbol at point." :type
   `(choice :value el-docstring-sap--posframe (const :tag "default(posframe)" 'el-docstring-sap--posframe)
-           ,df-cust-list))
-           ;; (radio :tag "additional sap display functions"
-           ;;  (function-item el-docstring-sap--quick-peek)
-           ;;  (function-item el-docstring-sap--popup)
-           ;;  (function-item el-docstring-sap--describe-symbol))))
+           ,(append '(radio :tag "Supported docstring display functions") (mapcar (lambda(e)(cons 'function-item (cons e nil))) el-docstring-sap--display-funcs ))))
 
 (defvar el-docstring-sap--timer nil  "Store the `el-docstring-sap-mode' timer." )
 (defvar el-docstring-sap--lastsym nil  "Don't idle-repeat the same symbol twice in a row.")
