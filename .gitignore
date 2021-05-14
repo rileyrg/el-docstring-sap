@@ -1,0 +1,8 @@
+*
+!.gitignore
+!*.el
+flycheck_*.el
+!*.org
+!*.md
+!images
+!images/*

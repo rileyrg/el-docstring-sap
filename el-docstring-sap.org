@@ -1,0 +1,220 @@
+#+TITLE: el-docstring-sap Elisp Docstring For Symbol At Point
+#+AUTHOR: rileyrg
+#+EMAIL: rileyrg at g m x dot de
+
+#+LANGUAGE: en
+#+STARTUP: showall
+
+#+EXPORT_FILE_NAME: README.md
+#+OPTIONS: toc:8 num:nil
+
+#+category: emacs
+#+FILETAGS: :elisp:docstring:emacs:github:
+
+#+PROPERTY: header-args:bash :tangle-mode (identity #o755)
+
+* el-docstring-sap.el Auto display elisp docstring for symbol at point
+
+
+   [[./el-docstring-at-point.el][el-docstring-sap]] defines a minor mode ~el-docstring-sap-mode~ which enables a "popup" displaying the elisp docstring for the symbol at point after a [[id:8d987f90-2d8e-483b-b3ef-c3014025377f][configured delay]].  Typically you add ~el-docstring-sap-mode~ to ~emacs-lisp-mode-hook~ to enable.
+
+   The package assumes [[https://github.com/tumashu/posframe][posframe]] is available and falls back to it if you set ~el-docstring-sap--display-func~ to
+   something that fails.
+
+** Enabling the minor mode
+
+   Typically simply add to your emacs-lisp-mode-hook.
+
+   #+begin_src emacs-lisp
+   (add-hook 'emacs-lisp-mode-hook 'el-docstring-sap-mode)
+   #+end_src
+
+** Manually invoke ~el-docstring-el-display~
+
+   Bind a key to ~el-docstring-sap-display~ to call regardless of mode. Note, that if ~el-docstring-sap-mode~ isnt on, the displayed docstring wont auto disappear when you type, instead invoke again with the cursor on whitespace to turn off the display - this is by design.
+
+   #+begin_src emacs-lisp
+     (global-set-key (kbd "M-<f2>") #'el-docstring-sap-display)
+   #+end_src
+
+** Alternatives to ~posframe~ for displaying the docstring
+
+    You need to explicitly  install the  libraries for ~quick-peek~ or ~popup~ if you want to use them else ~el-docstring-sap--popup~ or
+    ~el-docstring-sap--quick-peek~ will fall back to ~el-docstring-sap--posframe~ after failing to load the required library.
+
+    The custom options are still there for non loaded libraries in the defcustom for ~el-docstring-sap--display-func~ because I can't make head nor tail of the ~defcustom~ info pages to figure out how to dynamically construct a list of eligible
+    functions. Educate me!
+
+*** quick-peek
+
+    https://github.com/cpitclaudel/quick-peek
+
+*** popup
+
+    https://github.com/kzk/elisp/blob/master/m/auto-complete/popup.el
+
+
+*** ~describe-symbol~
+    You can set ~el-docstring-sap-display-func~ to ~el-docstring-sap--describe-symbol~ for standard help buffer viewing. See [[id:012ecbc3-fbd8-4192-b574-b8845e3ef3d0][display function customisation]] below.
+** Programmatically set your display function
+
+   ~(setq el-docstring-sap--display-func 'el-docstring-sap--quick-peek)~
+
+   The display function accepts a non zero length string to be displayed. If nil or empty string then erase the last display. See ~el-docstring-sap--display-funcs~.
+
+** Interactively choose  the docstring display function.
+   ~el-docstring-sap-select-display-func~ sets ~el-docstring-sap--display-func~.
+   Not permanent. Bring up the custom interface to save it. (~C-h v el-docstring-sap--display-func~).
+
+** ~use-package~ usage example
+
+    #+begin_src emacs-lisp
+      (use-package el-docstring-sap
+        :straight (el-docstring-sap :type git :host github :repo "rileyrg/el-docstring-sap" )
+        :custom  (el-docstring-sap--display-func 'el-docstring-sap--posframe)
+        :hook
+        (emacs-lisp-mode . el-docstring-sap-mode)
+        :bind
+        ("M-<f2>" . el-docstring-sap-display)
+        ("M-<f1>" . el-docstring-sap-mode))
+    #+end_src
+
+** Customisation
+   Customisation group ~el-docstring-sap~
+*** ~el-docstring-sap--delay~
+    :PROPERTIES:
+    :ID:       8d987f90-2d8e-483b-b3ef-c3014025377f
+    :END:
+    Delay before docstring for symbol at  point
+*** ~el-docstring-sap--display-func~
+    :PROPERTIES:
+    :ID:       012ecbc3-fbd8-4192-b574-b8845e3ef3d0
+    :END:
+
+    Function that takes a string. If nil or empty then hide previous.
+    See ~el-docstring-sap--display-funcs~ for candidates.
+
+**** ~el-docstring-sap--posframe~
+***** ~el-docstring-sap--posframe-poshandler~
+      The poshandler that ~posframe-show~ uses-
+***** ~el-docstring-sap--posframe-arghandler-plist~
+      Customise default values for posframe display.
+*****  Example screenshot
+      #+CAPTION: elisp docstring posframe
+      [[file:images/el-docstring-sap--posframe.png]]
+**** ~el-docstring-sap--describe-symbol~
+*****  Example screenshot
+      #+CAPTION: elisp docstring describe-symbol
+      [[file:images/el-docstring-sap--describe-symbol.png]]
+**** ~el-docstring-sap--quick-peek~
+*****  Example screenshot
+      #+CAPTION: elisp docstring quick-peek
+      [[file:images/el-docstring-sap--quick-peek.png]]
+**** ~el-docstring-sap--popup~
+*****  Example screenshot
+      #+CAPTION: elisp docstring popup
+      [[file:images/el-docstring-sap--popup.png]]
+
+
+*** ~el-docstring-sap--save-history~
+
+    *_Not Used currently_*.
+
+    When non-nil save the symbol queried to ~el-docstring-sap--history~
+
+* ToDo                                                             :noexport:
+** DONE   figure out how to create defcustom choices things from list  - el-docstring-sap--display-func :ARCHIVE:
+
+    #+begin_src emacs-lisp
+     (defcustom el-docstring-sap--display-func 'el-docstring-sap--posframe "The function to display a docstring for symbol at point." :type
+       `(choice :value el-docstring-sap--posframe (const :tag "default(posframe)" 'el-docstring-sap--posframe)
+                ,(append '(radio :tag "Supported docstring display functions") (mapcar (lambda(e)(cons 'function-item (cons e nil))) el-docstring-sap--display-funcs ))))
+     #+end_src
+
+
+      <rgr> I have a list so '(l1 l2 l3). I want to programatically  create a list something like  '(a b c (d l1) (d l2) (d l3)) where you can see the components from the first list and turned into cons cells (terminology ?) and appenaded to '(a b c). Whats the correct/nice/proper way to go about this in elisp?   there are oodles of list "for all" functions it seems.
+ <tromey> any way that works is fine
+ <tromey> a simple way is (append '(a b c) (mapcar ...))
+ <tromey> another way is a loop with (push ...)
+ <jla> is there a way to save somehow from EWW browser to a formatted file ?  (.Org preferred...  , .md ? )
+ <technomancy> pandoc, probably
+ <jla> umh, love pandoc ... i've found some 'org-eww-copy-for-org-mode'
+ <jla> dunno what it does...though
+ <rgr> thanks
+ <rgr> but doesnt the mapcar creaze a list of cons?
+ <rgr> Stupid Q. Ill just try it.
+*** second part pjb
+    :LOGBOOK:
+    - State "STARTED"    from              [2021-05-03 Mo 22:00]
+    :END:
+    <pjb> rgr: mapcar creates a list of conses. Only one cons per element in the input list.
+<pjb> rgr: if you want a different number of elements in the result than in the input, you can use mapcan.
+<pjb> (mapcan (lambda (x) (if (eq x 'l1) (list 'a 'b 'c (list 'd x)) (list (list 'd x)))) '(l1 l2 l3)) #| --> (a b c (d l1) (d l2) (d l3)) |#
+<pjb> rgr: but your example doesn't look like it.
+<pjb> rgr: the question is not as much what input what output, as what the fuck are you mapping? What's your transformative function?
+<pjb> rgr:  (mapcan (lambda (x) (if (eq x 'l1) '(a b c (d l1) (d l2) (d l3)) nil))  '(l1 l2 l3)) #| --> (a b c (d l1) (d l2) (d l3)) |#  works too!
+<pjb> rgr: but was the function (lambda (x) (if (eq x 'l1) '(a b c (d l1) (d l2) (d l3)) nil)) what you really wanted???
+<fsbot> My sources say no!
+<pjb> rgr: note in the first case: (mapcan (lambda (x) (if (eq x 'l1) (list 'a 'b 'c (list 'd x)) (list (list 'd x)))) '(1 2 3 4)) #| --> ((d 1) (d 2) (d 3) (d 4)) |#
+<pjb> rgr note in the second case: (mapcan (lambda (x) (if (eq x 'l1) '(a b c (d l1) (d l2) (d l3)) nil)) '(1 2 3 4)) #| --> nil |#  DUH!
+<rgr> sorry was away. will store and peruse.
+<rgr> but I think maybe you read too much into it there. all values were constants. not creating "l1 l2 l3" from l and (1 2 3)
+<rgr> (a b) and  (l1 l2 l3)  ->  '(a b c (C l1) (C l2) (C l3))
+<rgr> (a b c) and  (l1 l2 l3)  ->  '(a b c (C l1) (C l2) (C l3))
+<rgr> brb
+
+#+begin_src emacs-lisp
+  (let* ((l1 '(radio ))
+         (l2 '(f1 f2 f3))
+         (l3 (mapcar (lambda(e)(cons 'function-item (cons e nil))) l2))
+         (res (append l1 l3)))
+    res)
+#+end_src
+
+** DONE continue with adding el-docstring-sap history save          :ARCHIVE:
+   CLOSED: [2021-04-29 Do 14:06] SCHEDULED: <2021-04-29 Do>
+   :PROPERTIES:
+   :DateCreated: <2021-04-29 Do 13:26>
+   :END:
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2021-04-29 Do 14:06]
+   :END:
+** CANCELLED how to add el-docstring-sap--select-display-func to the custom for el-docstring-sap--display-func :CANCELLED:ARCHIVE:
+   CLOSED: [2021-05-08 Sat 16:17] SCHEDULED: <2021-04-29 Do>
+   :LOGBOOK:
+   - State "CANCELLED"  from "TODO"       [2021-05-08 Sat 16:17] \\
+     lost track . delete
+   - State "TODO"       from              [2021-04-29 Do 09:49]
+   :END:
+** CANCELLED [#C] add package linter into build process?  :ARCHIVE:CANCELLED:
+   CLOSED: [2021-05-08 Sat 16:18]
+   [[id:2f4d8bac-b94c-4bd8-bf58-b08cb86bc0a7][linting]]
+   :LOGBOOK:
+   - State "CANCELLED"  from "TODO"       [2021-05-08 Sat 16:18]
+   - State "TODO"       from              [2021-04-29 Do 07:21]
+   :END:
+** DONE [#A] when opening up customs using ~customize-group~ I can't edit them! :docstring:ARCHIVE:
+   CLOSED: [2021-04-29 Do 09:47] SCHEDULED: <2021-04-24 Sa>
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2021-04-29 Do 09:47]
+   - State "TODO"       from "STARTED"    [2021-04-23 Fr 08:15]
+   - State "STARTED"    from              [2021-04-23 Fr 08:15]
+   :END:
+* *Scratch*                                                        :noexport:
+
+
+** defcustom fiddle                                                 :ARCHIVE:
+
+#+begin_src emacs-lisp
+  (defun f1 () "this is f1")
+  (defun f2 () "this is f2")
+  (defun f3 () "this is f3")
+
+  (defcustom fs  '(f1 f2 f3)  "Functions." :type '(repeat (function)))
+
+  (defun f-func(a b)
+    (interactive)
+    (message "%s:%s" a b))
+
+  (defcustom f 'f1  "The custom function." :type '(function  :value f2 :format "%[BUTTON%]" :action f-func))
+#+end_src
