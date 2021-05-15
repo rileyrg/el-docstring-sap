@@ -3,6 +3,6 @@
 !*.el
 flycheck_*.el
 !*.org
-!*.md
+!README.md
 !images
 !images/*
