@@ -42,9 +42,6 @@
     You need to explicitly  install the  libraries for ~quick-peek~ or ~popup~ if you want to use them else ~el-docstring-sap--popup~ or
     ~el-docstring-sap--quick-peek~ will fall back to ~el-docstring-sap--posframe~ after failing to load the required library.
 
-    The custom options are still there for non loaded libraries in the defcustom for ~el-docstring-sap--display-func~ because I can't make head nor tail of the ~defcustom~ info pages to figure out how to dynamically construct a list of eligible
-    functions. Educate me!
-
 *** quick-peek
 
     https://github.com/cpitclaudel/quick-peek
