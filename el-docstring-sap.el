@@ -1,5 +1,7 @@
 ;;; el-docstring-sap.el --- A minor-mode display docstrings for the symbol at point
 ;;
+;; maintained in el-docstring-sap.org
+;;
 ;; Copyright (C) 2010-2021 rileyrg
 ;;
 ;; Author: rileyrg <rileyrg@gmx.de>
@@ -234,8 +236,6 @@
         (when docstring
           (popup-tip docstring)))
     (error (el-docstring-sap--display-fail docstring))))
-
-
 
 (provide 'el-docstring-sap)
 ;;; el-docstring-sap.el ends here
