@@ -15,6 +15,7 @@
 
 * el-docstring-sap.el Auto display elisp docstring for symbol at point
 
+   link: [[file:el-docstring-sap.el][el-docstring-sap.el]]
 
    [[./el-docstring-at-point.el][el-docstring-sap]] defines a minor mode ~el-docstring-sap-mode~ which enables a "popup" displaying the elisp docstring for the symbol at point after a [[id:8d987f90-2d8e-483b-b3ef-c3014025377f][configured delay]].  Typically you add ~el-docstring-sap-mode~ to ~emacs-lisp-mode-hook~ to enable.
 
