@@ -8,7 +8,7 @@
 #+EXPORT_FILE_NAME: README.md
 #+OPTIONS: toc:8 num:nil
 
-#+category: emacs
+#+category: el-docstring-sap
 #+FILETAGS: :elisp:docstring:emacs:github:
 
 #+PROPERTY: header-args:bash :tangle-mode (identity #o755)
