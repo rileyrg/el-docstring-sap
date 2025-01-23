@@ -11,20 +11,6 @@
 ;; Package-Requires: ((emacs "25.1") (posframe "1.0.1"))
 ;; Optional :  ((quick-peek "1.0") (popup "0.5.8"))
 ;; URL: https://github.com/rileyrg/el-docstring-sap
-;;
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 ;;;
 
 ;;; commentary:
@@ -72,6 +58,7 @@
 
 (require 'use-package)
 
+ ;;;###autoload
 (defun el-docstring-sap--describe-symbol(&optional _docstring sym)
 
   "Use the internal `describe-symbol' to show help for symbol SYM."
@@ -80,7 +67,7 @@
     (let ((hw (get-buffer-window (help-buffer))))
       (when (and hw (bound-and-true-p el-docstring-sap--auto-hide-describe-symbol-window))
         (delete-window hw)))))
-
+ ;;;###autoload
 (defun el-docstring-sap--docstring(sym)
   "Return the docstring attached to the symbol SYM.  If SYM has no docstring, return nil."
   (if sym
@@ -168,52 +155,54 @@
             el-docstring-sap--delay t
             'el-docstring-sap--timer-func))))
 
-(use-package posframe
-  :commands (posframe-hide posframe-show el-docstring-sap--posframe)
-  :init
-  (defcustom el-docstring-sap--posframe-poshandler  nil "select the PosFrame :poshandler."
-    :type '(choice
-            (const :tag "Show docstring at point." nil)
-            (radio :tag "posframe :poshandler"
-                   (function-item posframe-poshandler-frame-top-left-corner)
-                   (function-item posframe-poshandler-frame-top-center)
-                   (function-item posframe-poshandler-frame-top-right-corner)
-                   (function-item posframe-poshandler-frame-bottom-left-corner)
-                   (function-item posframe-poshandler-frame-bottom-center)
-                   (function-item posframe-poshandler-frame-bottom-right-corner)
-                   (function-item posframe-poshandler-frame-center)
-                   (function-item posframe-poshandler-window-top-left-corner)
-                   (function-item posframe-poshandler-window-top-center)
-                   (function-item posframe-poshandler-window-top-right-corner)
-                   (function-item posframe-poshandler-window-bottom-left-corner)
-                   (function-item posframe-poshandler-window-bottom-center)
-                   (function-item posframe-poshandler-window-bottom-right-corner)
-                   (function-item posframe-poshandler-window-center))))
+(use-package posframe)
 
-  (defcustom el-docstring-sap--posframe-arghandler-plist  '(:width 80 :internal-border-width 2 :background-color "#303030" :border-width 2 :border-color "orange") "Posfame's fallback config plist." :type 'plist )
+(defcustom el-docstring-sap--posframe-poshandler  nil "select the PosFrame :poshandler."
+  :type '(choice
+          (const :tag "Show docstring at point." nil)
+          (radio :tag "posframe :poshandler"
+                 (function-item posframe-poshandler-frame-top-left-corner)
+                 (function-item posframe-poshandler-frame-top-center)
+                 (function-item posframe-poshandler-frame-top-right-corner)
+                 (function-item posframe-poshandler-frame-bottom-left-corner)
+                 (function-item posframe-poshandler-frame-bottom-center)
+                 (function-item posframe-poshandler-frame-bottom-right-corner)
+                 (function-item posframe-poshandler-frame-center)
+                 (function-item posframe-poshandler-window-top-left-corner)
+                 (function-item posframe-poshandler-window-top-center)
+                 (function-item posframe-poshandler-window-top-right-corner)
+                 (function-item posframe-poshandler-window-bottom-left-corner)
+                 (function-item posframe-poshandler-window-bottom-center)
+                 (function-item posframe-poshandler-window-bottom-right-corner)
+                 (function-item posframe-poshandler-window-center))))
 
-  (defun el-docstring-sap--posframe-arghandler (_buffer-or-name arg-name value)
-    "Function to override posframe VALUE for ARG-NAME with customs from the plist `el-docstring-sap--posframe-arghandler-plist'"
-    (let ((info el-docstring-sap--posframe-arghandler-plist))
-      (or (plist-get info arg-name) value)))
+(defcustom el-docstring-sap--posframe-arghandler-plist  '(:width 80 :internal-border-width 2 :background-color "#303030" :border-width 2 :border-color "orange") "Posfame's fallback config plist." :type 'plist )
 
-  (defun el-docstring-sap--posframe(&optional docstring _sym)
-    "`posframe-show' to display  DOCSTRING. Pass nil to erase."
-    (interactive)
-    (posframe-hide "*el-docstring*")
-    (when docstring
-      (let ((p (point))
-            (posframe-arghandler 'el-docstring-sap--posframe-arghandler))
-        (save-window-excursion
-          (with-current-buffer
-              (get-buffer-create "*el-docstring*")
-            (erase-buffer)
-            (insert docstring)
-            (posframe-show (current-buffer)
-                           :string docstring
-                           :poshandler el-docstring-sap--posframe-poshandler
-                           :position (if (bound-and-true-p el-docstring-sap--posframe-poshandler) t p))))))))
+(defun el-docstring-sap--posframe-arghandler (_buffer-or-name arg-name value)
+  "Function to override posframe VALUE for ARG-NAME with customs from the plist `el-docstring-sap--posframe-arghandler-plist'"
+  (let ((info el-docstring-sap--posframe-arghandler-plist))
+    (or (plist-get info arg-name) value)))
 
+
+;;;###autoload
+(defun el-docstring-sap--posframe(&optional docstring _sym)
+  "`posframe-show' to display  DOCSTRING. Pass nil to erase."
+  (interactive)
+  (posframe-hide "*el-docstring*")
+  (when docstring
+    (let ((p (point))
+          (posframe-arghandler 'el-docstring-sap--posframe-arghandler))
+      (save-window-excursion
+        (with-current-buffer
+            (get-buffer-create "*el-docstring*")
+          (erase-buffer)
+          (insert docstring)
+          (posframe-show (current-buffer)
+                         :string docstring
+                         :poshandler el-docstring-sap--posframe-poshandler
+                         :position (if (bound-and-true-p el-docstring-sap--posframe-poshandler) t p)))))))
+
+;;;###autoload
 (defun el-docstring-sap--quick-peek(&optional docstring _sym)
   "`quick-peek-show' to display  DOCSTRING.  Pass nil to erase."
   (interactive)
@@ -226,6 +215,7 @@
           (quick-peek-show docstring)))
     (error (el-docstring-sap--display-fail docstring))))
 
+;;;###autoload
 (defun el-docstring-sap--popup(&optional docstring _sym)
   "`popup-tip' to display  DOCSTRING.  Pass nil to erase."
   (interactive)
@@ -238,4 +228,3 @@
     (error (el-docstring-sap--display-fail docstring))))
 
 (provide 'el-docstring-sap)
-;;; el-docstring-sap.el ends here
