@@ -1,30 +1,30 @@
 
 # Table of Contents
 
--   [Introduction](#orgba58a93)
--   [Installation](#org6e6a1e0)
-    -   [use-package](#org5137ebe)
--   [Configuration](#orgbb0e7c3)
-    -   [Enabling the minor mode](#org84f7201)
-    -   [Manually invoke `el-docstring-el-display`](#orge7c24fb)
-    -   [Alternatives to `posframe` for displaying the docstring](#orgb172b47)
-        -   [quick-peek](#org6a3f42d)
-        -   [popup](#orgee949d3)
-        -   [`describe-symbol`](#org46079e8)
-    -   [Programmatically set your display function](#orgc3bf3ec)
-    -   [Interactively choose  the docstring display function.](#org01b9b1c)
--   [Customisation](#org7196cc7)
-        -   [`el-docstring-sap--delay`](#orgf5afb91)
-        -   [`el-docstring-sap--display-func`](#org4e9d443)
-        -   [`el-docstring-sap--save-history`](#org9d877ec)
--   [el-docstring-sap.el](#org1147685)
-    -   [header](#org935372c)
-    -   [customisation group](#orgb529934)
-    -   [main code (to be further broken down)](#org1204ed0)
+-   [Introduction](#orgbffa372)
+-   [Installation](#org6bff164)
+    -   [use-package](#org05b0e9d)
+-   [Configuration](#org140bf32)
+    -   [Enabling the minor mode](#org9739f77)
+    -   [Manually invoke `el-docstring-el-display`](#org2df78ef)
+    -   [Alternatives to `posframe` for displaying the docstring](#org3d9a9fe)
+        -   [quick-peek](#org4222cd7)
+        -   [popup](#org7be6ab4)
+        -   [`describe-symbol`](#orgd21c724)
+    -   [Programmatically set your display function](#orgc9c8e3d)
+    -   [Interactively choose  the docstring display function.](#org9486e1d)
+-   [Customisation](#org0d8646d)
+        -   [`el-docstring-sap--delay`](#org721aaa4)
+        -   [`el-docstring-sap--display-func`](#org1a56f51)
+        -   [`el-docstring-sap--save-history`](#org2c289b2)
+-   [el-docstring-sap.el](#org09fa342)
+    -   [header](#org0737d60)
+    -   [customisation group](#org42cf21e)
+    -   [main code (to be further broken down)](#org36b2792)
 
 
 
-<a id="orgba58a93"></a>
+<a id="orgbffa372"></a>
 
 # Introduction
 
@@ -32,18 +32,18 @@ Auto display elisp docstring for symbol at point
 
 link: [el-docstring-sap.el](el-docstring-sap.el)
 
-[el-docstring-sap](./el-docstring-at-point.el) defines a minor mode `el-docstring-sap-mode` which enables a "popup" displaying the elisp docstring for the symbol at point after a [configured delay](#orgf5afb91).  Typically you add `el-docstring-sap-mode` to `emacs-lisp-mode-hook` to enable.
+[el-docstring-sap](./el-docstring-at-point.el) defines a minor mode `el-docstring-sap-mode` which enables a "popup" displaying the elisp docstring for the symbol at point after a [configured delay](#org721aaa4).  Typically you add `el-docstring-sap-mode` to `emacs-lisp-mode-hook` to enable.
 
 The package assumes [posframe](https://github.com/tumashu/posframe) is available and falls back to it if you set `el-docstring-sap--display-func` to
 something that fails.
 
 
-<a id="org6e6a1e0"></a>
+<a id="org6bff164"></a>
 
 # Installation
 
 
-<a id="org5137ebe"></a>
+<a id="org05b0e9d"></a>
 
 ## use-package
 
@@ -57,12 +57,12 @@ something that fails.
       ("M-<f1>" . el-docstring-sap-mode))
 
 
-<a id="orgbb0e7c3"></a>
+<a id="org140bf32"></a>
 
 # Configuration
 
 
-<a id="org84f7201"></a>
+<a id="org9739f77"></a>
 
 ## Enabling the minor mode
 
@@ -71,7 +71,7 @@ Typically simply add to your emacs-lisp-mode-hook.
     (add-hook 'emacs-lisp-mode-hook 'el-docstring-sap-mode)
 
 
-<a id="orge7c24fb"></a>
+<a id="org2df78ef"></a>
 
 ## Manually invoke `el-docstring-el-display`
 
@@ -80,7 +80,7 @@ Bind a key to `el-docstring-sap-display` to call regardless of mode. Note, that 
     (global-set-key (kbd "M-<f2>") #'el-docstring-sap-display)
 
 
-<a id="orgb172b47"></a>
+<a id="org3d9a9fe"></a>
 
 ## Alternatives to `posframe` for displaying the docstring
 
@@ -88,28 +88,28 @@ You need to explicitly  install the  libraries for `quick-peek` or `popup` if yo
 `el-docstring-sap--quick-peek` will fall back to `el-docstring-sap--posframe` after failing to load the required library.
 
 
-<a id="org6a3f42d"></a>
+<a id="org4222cd7"></a>
 
 ### quick-peek
 
 <https://github.com/cpitclaudel/quick-peek>
 
 
-<a id="orgee949d3"></a>
+<a id="org7be6ab4"></a>
 
 ### popup
 
 <https://github.com/kzk/elisp/blob/master/m/auto-complete/popup.el>
 
 
-<a id="org46079e8"></a>
+<a id="orgd21c724"></a>
 
 ### `describe-symbol`
 
-You can set `el-docstring-sap-display-func` to `el-docstring-sap--describe-symbol` for standard help buffer viewing. See [display function customisation](#org4e9d443) below.
+You can set `el-docstring-sap-display-func` to `el-docstring-sap--describe-symbol` for standard help buffer viewing. See [display function customisation](#org1a56f51) below.
 
 
-<a id="orgc3bf3ec"></a>
+<a id="orgc9c8e3d"></a>
 
 ## Programmatically set your display function
 
@@ -118,7 +118,7 @@ You can set `el-docstring-sap-display-func` to `el-docstring-sap--describe-symbo
 The display function accepts a non zero length string to be displayed. If nil or empty string then erase the last display. See `el-docstring-sap--display-funcs`.
 
 
-<a id="org01b9b1c"></a>
+<a id="org9486e1d"></a>
 
 ## Interactively choose  the docstring display function.
 
@@ -126,21 +126,21 @@ The display function accepts a non zero length string to be displayed. If nil or
 Not permanent. Bring up the custom interface to save it. (`C-h v el-docstring-sap--display-func`).
 
 
-<a id="org7196cc7"></a>
+<a id="org0d8646d"></a>
 
 # Customisation
 
 Customisation group `el-docstring-sap`
 
 
-<a id="orgf5afb91"></a>
+<a id="org721aaa4"></a>
 
 ### `el-docstring-sap--delay`
 
 Delay before docstring for symbol at  point
 
 
-<a id="org4e9d443"></a>
+<a id="org1a56f51"></a>
 
 ### `el-docstring-sap--display-func`
 
@@ -180,7 +180,7 @@ See `el-docstring-sap--display-funcs` for candidates.
         ![img](images/el-docstring-sap--popup.png "elisp docstring popup")
 
 
-<a id="org9d877ec"></a>
+<a id="org2c289b2"></a>
 
 ### `el-docstring-sap--save-history`
 
@@ -189,14 +189,14 @@ See `el-docstring-sap--display-funcs` for candidates.
 When non-nil save the symbol queried to `el-docstring-sap--history`
 
 
-<a id="org1147685"></a>
+<a id="org09fa342"></a>
 
 # el-docstring-sap.el
 
 link: [el-docstring-sap.el](el-docstring-sap.el)
 
 
-<a id="org935372c"></a>
+<a id="org0737d60"></a>
 
 ## header
 
@@ -237,7 +237,7 @@ link: [el-docstring-sap.el](el-docstring-sap.el)
     ;;; code:
 
 
-<a id="orgb529934"></a>
+<a id="org42cf21e"></a>
 
 ## customisation group
 
@@ -261,7 +261,7 @@ link: [el-docstring-sap.el](el-docstring-sap.el)
                ,(append '(radio :tag "Supported docstring display functions") (mapcar (lambda(e)(cons 'function-item (cons e nil))) el-docstring-sap--display-funcs ))))
 
 
-<a id="org1204ed0"></a>
+<a id="org36b2792"></a>
 
 ## TODO main code (to be further broken down)
 
@@ -439,4 +439,6 @@ link: [el-docstring-sap.el](el-docstring-sap.el)
          (error (el-docstring-sap--display-fail docstring))))
     
      (provide 'el-docstring-sap)
+
+(require 'org-capture)
 
